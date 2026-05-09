@@ -58,9 +58,6 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
 }));
-app.use(express.static(path.join(__dirname, 'admin/assets')));
-app.use('/uploads', express.static(path.join(__dirname, 'assets/uploads')));
-app.use(express.static(path.join(__dirname)));
 
 // Configurar multer para subidas
 const upload = multer({
@@ -95,7 +92,7 @@ function renderFooter() {
 
 // Rutas
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get('/admin', (req, res) => {
@@ -621,6 +618,11 @@ app.post('/admin/api', (req, res) => {
         res.status(400).json({ ok: false, message: e.message });
     }
 });
+
+// Archivos estáticos públicos
+app.use('/assets', express.static(path.join(__dirname, 'admin/assets')));
+app.use('/uploads', express.static(path.join(__dirname, 'assets/uploads')));
+
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

@@ -405,7 +405,7 @@ app.get('/admin/productos_individuales', (req, res) => {
     res.render('admin/productos_individuales', { ...header, productos, categorias, editing, bd_format_money, bd_money_safe });
 });
 
-app.post('/admin/productos_individuales', (req, res) => {
+app.post('/admin/productos_individuales', upload.single('imagen_file'), (req, res) => {
     if (!bd_require_login(req, res)) return;
     const { id, codigo, nombre, categoria, descripcion, precio, coste, stock, imagen, imagen_actual, destacado, estado, tags } = req.body;
     const catalogo = bd_catalogo();
@@ -551,8 +551,9 @@ app.post('/admin/api', (req, res) => {
 
     try {
         const payload = req.body;
-        if (!Array.isArray(payload)) {
+        if (!payload || typeof payload !== 'object') {
             throw new Error('JSON inválido.');
+
         }
 
         const itemsPayload = payload.items || [];
@@ -616,6 +617,44 @@ app.post('/admin/api', (req, res) => {
         res.json({ ok: true, pedido_id: pedidoId, pedido });
     } catch (e) {
         res.status(400).json({ ok: false, message: e.message });
+    }
+});
+
+// ==============================
+// API PÚBLICA CATÁLOGO
+// ==============================
+
+app.get('/api/catalogo', (req, res) => {
+    try {
+
+        const catalogo = bd_catalogo();
+
+        // Productos activos
+        const productos = (catalogo.productos || []).filter(
+            p => p.estado !== false
+        );
+
+        // Categorías activas
+        const categorias = (catalogo.categorias || []).filter(
+            c => c.estado !== false
+        );
+
+        res.json({
+            ok: true,
+            config: catalogo.config || {},
+            productos,
+            categorias
+        });
+
+    } catch (error) {
+
+        console.error('Error API catálogo:', error);
+
+        res.status(500).json({
+            ok: false,
+            error: 'Error cargando catálogo'
+        });
+
     }
 });
 

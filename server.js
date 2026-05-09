@@ -620,7 +620,7 @@ app.post('/admin/api', (req, res) => {
 });
 
 // Archivos estáticos públicos
-app.use('/assets', express.static(path.join(__dirname, 'admin/assets')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/uploads', express.static(path.join(__dirname, 'assets/uploads')));
 
 app.listen(PORT, () => {

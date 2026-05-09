@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= bd_h(title) %> | Admin Bella Dorada</title>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body class="<%= active === 'compras' ? 'admin-sidebar-collapsed' : '' %>">
+
+  <div class="admin-sidebar-overlay" data-admin-menu-close></div>
+
+  <aside class="admin-sidebar" data-admin-sidebar>
+    <div class="admin-sidebar-head">
+      <a class="admin-brand" href="/admin/dashboard">
+        <span>BD</span>
+        <strong>Bella Dorada</strong>
+      </a>
+
+      <button type="button" class="admin-sidebar-close" data-admin-menu-close aria-label="Cerrar menú">
+        ×
+      </button>
+    </div>
+
+    <nav>
+      <a class="<%= active === 'dashboard' ? 'active' : '' %>" href="/admin/dashboard">Dashboard</a>
+      <a class="<%= active === 'productos' ? 'active' : '' %>" href="/admin/productos">Ramos full</a>
+      <a class="<%= active === 'productos_individuales' ? 'active' : '' %>" href="/admin/productos_individuales">Productos individuales</a>
+      <a class="<%= active === 'presentaciones' ? 'active' : '' %>" href="/admin/presentaciones">Presentaciones ramos</a>
+      <a class="<%= active === 'categorias' ? 'active' : '' %>" href="/admin/categorias">Categorías produtos</a>
+      <a class="<%= active === 'ventas' ? 'active' : '' %>" href="/admin/ventas">Ventas</a>
+      <a class="<%= active === 'pedidos' ? 'active' : '' %>" href="/admin/pedidos">Pedidos</a>
+      <a class="<%= active === 'compras' ? 'active' : '' %>" href="/admin/compras">Compras</a>
+      <a class="<%= active === 'usuarios' ? 'active' : '' %>" href="/admin/usuarios">Usuarios</a>
+      <a class="<%= active === 'roles' ? 'active' : '' %>" href="/admin/roles">Roles</a>
+      <a href="/index.html" target="_blank">Ver web</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div class="admin-topbar-left">
+        <button type="button" class="admin-menu-toggle" data-admin-menu-toggle aria-label="Abrir menú">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div>
+          <p>Panel administrativo</p>
+          <h1><%= bd_h(title) %></h1>
+        </div>
+      </div>
+
+      <div class="admin-user">
+        <span><%= bd_h(user.nombre) %></span>
+        <a href="/admin/logout">Salir</a>
+      </div>
+    </header>
+
+    <% if (flash) { %>
+      <div class="alert <%= bd_h(flash.type) %>"><%= bd_h(flash.message) %></div>
+    <% } %>
+
+    <section class="admin-card">
+      <div class="admin-card-header"><h2>Registrar compra / entrada de stock</h2></div>
+      <form method="post">
+        <div class="form-grid three">
+          <div class="form-field">
+            <label>Producto</label>
+            <select name="producto_id" required>
+              <option value="">Seleccionar</option>
+              <% productosActivos.forEach(producto => { %>
+                <option value="<%= producto.id %>"><%= bd_h((producto.codigo || '') + ' · ' + (producto.nombre || '')) %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Proveedor</label>
+            <input name="proveedor" placeholder="Nombre del proveedor">
+          </div>
+          <div class="form-field">
+            <label>Cantidad</label>
+            <input name="cantidad" type="number" min="1" value="1" required>
+          </div>
+          <div class="form-field">
+            <label>Coste unitario</label>
+            <input name="costo_unitario" placeholder="12,50" required>
+          </div>
+          <div class="form-field full">
+            <label>Nota</label>
+            <input name="nota" placeholder="Observación interna">
+          </div>
+        </div>
+        <div class="actions"><button class="btn btn-primary" type="submit">Registrar compra</button></div>
+      </form>
+    </section>
+
+    <section class="admin-card">
+      <div class="admin-card-header"><h2>Historial de compras</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Producto</th><th>Proveedor</th><th>Cantidad</th><th>Unitario</th><th>Total</th></tr></thead>
+          <tbody>
+            <% compras.forEach(compra => { %>
+              <tr>
+                <td><%= bd_h(new Date(compra.created_at || Date.now()).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })) %></td>
+                <td><strong><%= bd_h(compra.producto_nombre || '') %></strong></td>
+                <td><%= bd_h(compra.proveedor || '') %></td>
+                <td><%= parseInt(compra.cantidad || 0) %></td>
+                <td><%= bd_h(bd_format_money(parseFloat(compra.costo_unitario || 0))) %></td>
+                <td><strong><%= bd_h(bd_format_money(parseFloat(compra.total || 0))) %></strong></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const body = document.body;
+      const openButton = document.querySelector('[data-admin-menu-toggle]');
+      const closeButtons = document.querySelectorAll('[data-admin-menu-close]');
+      const sidebarLinks = document.querySelectorAll('.admin-sidebar nav a');
+
+      function openMenu() {
+        body.classList.add('admin-sidebar-open');
+        body.classList.remove('admin-sidebar-collapsed');
+      }
+
+      function closeMenu() {
+        body.classList.remove('admin-sidebar-open');
+        body.classList.add('admin-sidebar-collapsed');
+      }
+
+      if (openButton) {
+        openButton.addEventListener('click', function () {
+          if (body.classList.contains('admin-sidebar-open')) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        });
+      }
+
+      closeButtons.forEach(function (button) {
+        button.addEventListener('click', closeMenu);
+      });
+
+      sidebarLinks.forEach(function (link) {
+        link.addEventListener('click', function () {
+          if (window.innerWidth <= 980) {
+            closeMenu();
+          }
+        });
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          closeMenu();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

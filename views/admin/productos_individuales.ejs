@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= bd_h(title) %> | Admin Bella Dorada</title>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body class="<%= active === 'productos_individuales' ? 'admin-sidebar-collapsed' : '' %>">
+
+  <div class="admin-sidebar-overlay" data-admin-menu-close></div>
+
+  <aside class="admin-sidebar" data-admin-sidebar>
+    <div class="admin-sidebar-head">
+      <a class="admin-brand" href="/admin/dashboard">
+        <span>BD</span>
+        <strong>Bella Dorada</strong>
+      </a>
+
+      <button type="button" class="admin-sidebar-close" data-admin-menu-close aria-label="Cerrar menú">
+        ×
+      </button>
+    </div>
+
+    <nav>
+      <a class="<%= active === 'dashboard' ? 'active' : '' %>" href="/admin/dashboard">Dashboard</a>
+      <a class="<%= active === 'productos' ? 'active' : '' %>" href="/admin/productos">Ramos full</a>
+      <a class="<%= active === 'productos_individuales' ? 'active' : '' %>" href="/admin/productos_individuales">Productos individuales</a>
+      <a class="<%= active === 'presentaciones' ? 'active' : '' %>" href="/admin/presentaciones">Presentaciones ramos</a>
+      <a class="<%= active === 'categorias' ? 'active' : '' %>" href="/admin/categorias">Categorías produtos</a>
+      <a class="<%= active === 'ventas' ? 'active' : '' %>" href="/admin/ventas">Ventas</a>
+      <a class="<%= active === 'pedidos' ? 'active' : '' %>" href="/admin/pedidos">Pedidos</a>
+      <a class="<%= active === 'compras' ? 'active' : '' %>" href="/admin/compras">Compras</a>
+      <a class="<%= active === 'usuarios' ? 'active' : '' %>" href="/admin/usuarios">Usuarios</a>
+      <a class="<%= active === 'roles' ? 'active' : '' %>" href="/admin/roles">Roles</a>
+      <a href="/index.html" target="_blank">Ver web</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div class="admin-topbar-left">
+        <button type="button" class="admin-menu-toggle" data-admin-menu-toggle aria-label="Abrir menú">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div>
+          <p>Panel administrativo</p>
+          <h1><%= bd_h(title) %></h1>
+        </div>
+      </div>
+
+      <div class="admin-user">
+        <span><%= bd_h(user.nombre) %></span>
+        <a href="/admin/logout">Salir</a>
+      </div>
+    </header>
+
+    <% if (flash) { %>
+      <div class="alert <%= bd_h(flash.type) %>"><%= bd_h(flash.message) %></div>
+    <% } %>
+
+    <section class="admin-card admin-toolbar-card">
+      <div class="admin-card-header">
+        <div>
+          <h2>Productos individuales</h2>
+          <p>Productos de belleza y varios vendidos por unidad.</p>
+        </div>
+
+        <button type="button" class="btn btn-primary" data-open-product-modal>
+          + Nuevo producto individual
+        </button>
+      </div>
+    </section>
+
+    <div class="bd-modal-overlay <%= editing ? 'is-open' : '' %>" data-product-modal aria-hidden="<%= editing ? 'false' : 'true' %>">
+      <div class="bd-modal">
+        <div class="bd-modal-header">
+          <div>
+            <p class="eyebrow">Catálogo Bella Dorada</p>
+            <h2><%= editing ? 'Editar producto individual' : 'Nuevo producto individual' %></h2>
+          </div>
+
+          <button type="button" class="bd-modal-close" data-close-product-modal data-cancel-url="<%= editing ? '/admin/productos_individuales' : '' %>" aria-label="Cerrar modal">
+            ×
+          </button>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="bd-modal-form">
+          <input type="hidden" name="id" value="<%= bd_h(String(editing ? editing.id : '')) %>">
+          <input type="hidden" name="imagen_actual" value="<%= bd_h(editing ? editing.imagen : '') %>">
+
+          <div class="form-grid three">
+            <div class="form-field">
+              <label>ID</label>
+              <input name="id" value="<%= bd_h(editing ? editing.id : '') %>" readonly>
+              <small class="field-help">
+                Se genera automáticamente si está vacío.
+              </small>
+            </div>
+
+            <div class="form-field">
+              <label>Código</label>
+              <input name="codigo" value="<%= bd_h(editing ? editing.codigo : '') %>" placeholder="PROD-001">
+            </div>
+
+            <div class="form-field">
+              <label>Nombre</label>
+              <input name="nombre" value="<%= bd_h(editing ? editing.nombre : '') %>" placeholder="Producto individual" required>
+            </div>
+
+            <div class="form-field">
+              <label>Categoría</label>
+              <select name="categoria">
+                <option value="">Sin categoría</option>
+                <% categorias.forEach(categoria => { %>
+                  <option value="<%= bd_h(categoria.id) %>" <%= (editing && String(editing.categoria) === String(categoria.id)) ? 'selected' : '' %>>
+                    <%= bd_h(categoria.nombre) %>
+                  </option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Precio</label>
+              <input name="precio" type="number" step="0.01" value="<%= editing ? editing.precio : '' %>" placeholder="0.00" required>
+            </div>
+
+            <div class="form-field">
+              <label>Coste</label>
+              <input name="coste" type="number" step="0.01" value="<%= editing ? editing.coste : '' %>" placeholder="0.00">
+            </div>
+
+            <div class="form-field">
+              <label>Stock</label>
+              <input name="stock" type="number" min="0" value="<%= editing ? editing.stock : 0 %>">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Descripción</label>
+            <textarea name="descripcion" rows="3" placeholder="Descripción del producto"><%= bd_h(editing ? editing.descripcion : '') %></textarea>
+          </div>
+
+          <div class="form-field">
+            <label>Imagen</label>
+            <input name="imagen" value="<%= bd_h(editing ? editing.imagen : '') %>" placeholder="URL de la imagen">
+            <small class="field-help">
+              O sube un archivo desde tu computadora.
+            </small>
+            <input type="file" name="imagen_file" accept="image/*">
+            <% if (editing && editing.imagen) { %>
+              <div style="margin-top: 8px;">
+                <img src="<%= bd_h('../' + editing.imagen) %>" alt="Imagen actual" style="max-width: 100px; max-height: 100px;">
+              </div>
+            <% } %>
+          </div>
+
+          <div class="form-field">
+            <label>Tags</label>
+            <input name="tags" value="<%= editing ? (editing.tags || []).join(', ') : '' %>" placeholder="tag1, tag2, tag3">
+            <small class="field-help">
+              Separados por coma.
+            </small>
+          </div>
+
+          <div class="form-checks" style="margin-top: 14px;">
+            <label>
+              <input type="checkbox" name="destacado" <%= (editing && editing.destacado) ? 'checked' : '' %>>
+              Producto destacado
+            </label>
+
+            <label>
+              <input type="checkbox" name="estado" <%= (!editing || editing.estado !== false) ? 'checked' : '' %>>
+              Visible
+            </label>
+          </div>
+
+          <div class="bd-modal-actions">
+            <button class="btn btn-primary" type="submit">
+              Guardar producto individual
+            </button>
+
+            <button type="button" class="btn btn-soft" data-close-product-modal data-cancel-url="<%= editing ? '/admin/productos_individuales' : '' %>">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <section class="admin-card">
+      <div class="admin-card-header">
+        <h2>Listado de productos individuales</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Código</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% productos.forEach(producto => { %>
+              <% 
+                const categoria = categorias.find(c => String(c.id) === String(producto.categoria));
+                const precio = parseFloat(producto.precio) || 0;
+                const coste = parseFloat(producto.coste) || 0;
+                const margen = precio - coste;
+                const visible = producto.estado !== false;
+                const stock = parseInt(producto.stock) || 0;
+              %>
+              <tr>
+                <td data-label="Producto" class="td-product">
+                  <strong><%= bd_h(producto.nombre || '') %></strong>
+                  <% if (producto.descripcion) { %>
+                    <small><%= bd_h(producto.descripcion.substring(0, 50)) %>...</small>
+                  <% } %>
+                </td>
+
+                <td data-label="Código">
+                  <%= bd_h(producto.codigo || '') %>
+                </td>
+
+                <td data-label="Categoría">
+                  <%= categoria ? bd_h(categoria.nombre) : 'Sin categoría' %>
+                </td>
+
+                <td data-label="Precio">
+                  <strong><%= bd_money_safe(precio) %></strong>
+                  <% if (coste > 0) { %>
+                    <small>Coste: <%= bd_money_safe(coste) %></small>
+                    <small class="status <%= margen < 0 ? 'bad' : (margen <= 5000 ? 'warn' : 'ok') %>">
+                      Margen: <%= bd_money_safe(margen) %>
+                    </small>
+                  <% } %>
+                </td>
+
+                <td data-label="Stock">
+                  <span class="status <%= stock <= 3 ? 'bad' : (stock <= 10 ? 'warn' : 'ok') %>">
+                    <%= stock %>
+                  </span>
+                </td>
+
+                <td data-label="Estado">
+                  <span class="status <%= visible ? 'ok' : 'bad' %>">
+                    <%= visible ? 'Visible' : 'Oculto' %>
+                  </span>
+                </td>
+
+                <td data-label="Acciones" class="td-actions">
+                  <a class="btn btn-soft" href="/admin/productos_individuales?editar=<%= producto.id %>">
+                    Editar
+                  </a>
+
+                  <a class="btn btn-danger" href="/admin/productos_individuales/eliminar/<%= producto.id %>" onclick="return confirm('¿Desactivar este producto?')">
+                    Desactivar
+                  </a>
+                </td>
+              </tr>
+            <% }); %>
+
+            <% if (productos.length === 0) { %>
+              <tr>
+                <td colspan="7">No hay productos individuales creados todavía.</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modal = document.querySelector('[data-product-modal]');
+      const openButton = document.querySelector('[data-open-product-modal]');
+      const closeButtons = document.querySelectorAll('[data-close-product-modal]');
+
+      function openProductModal() {
+        if (!modal) return;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('bd-modal-open');
+      }
+
+      function closeProductModal(button) {
+        const cancelUrl = button?.dataset?.cancelUrl || '';
+        if (cancelUrl) {
+          window.location.href = cancelUrl;
+          return;
+        }
+        if (!modal) return;
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('bd-modal-open');
+      }
+
+      if (modal && modal.classList.contains('is-open')) {
+        document.body.classList.add('bd-modal-open');
+      }
+
+      if (openButton) {
+        openButton.addEventListener('click', openProductModal);
+      }
+
+      closeButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          closeProductModal(button);
+        });
+      });
+
+      if (modal) {
+        modal.addEventListener('click', function (event) {
+          if (event.target === modal) {
+            const closeButton = document.querySelector('[data-close-product-modal]');
+            closeProductModal(closeButton);
+          }
+        });
+      }
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modal && modal.classList.contains('is-open')) {
+          const closeButton = document.querySelector('[data-close-product-modal]');
+          closeProductModal(closeButton);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

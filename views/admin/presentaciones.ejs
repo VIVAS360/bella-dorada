@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= bd_h(title) %> | Admin Bella Dorada</title>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body class="<%= active === 'presentaciones' ? 'admin-sidebar-collapsed' : '' %>">
+
+  <div class="admin-sidebar-overlay" data-admin-menu-close></div>
+
+  <aside class="admin-sidebar" data-admin-sidebar>
+    <div class="admin-sidebar-head">
+      <a class="admin-brand" href="/admin/dashboard">
+        <span>BD</span>
+        <strong>Bella Dorada</strong>
+      </a>
+
+      <button type="button" class="admin-sidebar-close" data-admin-menu-close aria-label="Cerrar menú">
+        ×
+      </button>
+    </div>
+
+    <nav>
+      <a class="<%= active === 'dashboard' ? 'active' : '' %>" href="/admin/dashboard">Dashboard</a>
+      <a class="<%= active === 'productos' ? 'active' : '' %>" href="/admin/productos">Ramos full</a>
+      <a class="<%= active === 'productos_individuales' ? 'active' : '' %>" href="/admin/productos_individuales">Productos individuales</a>
+      <a class="<%= active === 'presentaciones' ? 'active' : '' %>" href="/admin/presentaciones">Presentaciones ramos</a>
+      <a class="<%= active === 'categorias' ? 'active' : '' %>" href="/admin/categorias">Categorías produtos</a>
+      <a class="<%= active === 'ventas' ? 'active' : '' %>" href="/admin/ventas">Ventas</a>
+      <a class="<%= active === 'pedidos' ? 'active' : '' %>" href="/admin/pedidos">Pedidos</a>
+      <a class="<%= active === 'compras' ? 'active' : '' %>" href="/admin/compras">Compras</a>
+      <a class="<%= active === 'usuarios' ? 'active' : '' %>" href="/admin/usuarios">Usuarios</a>
+      <a class="<%= active === 'roles' ? 'active' : '' %>" href="/admin/roles">Roles</a>
+      <a href="/index.html" target="_blank">Ver web</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div class="admin-topbar-left">
+        <button type="button" class="admin-menu-toggle" data-admin-menu-toggle aria-label="Abrir menú">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div>
+          <p>Panel administrativo</p>
+          <h1><%= bd_h(title) %></h1>
+        </div>
+      </div>
+
+      <div class="admin-user">
+        <span><%= bd_h(user.nombre) %></span>
+        <a href="/admin/logout">Salir</a>
+      </div>
+    </header>
+
+    <% if (flash) { %>
+      <div class="alert <%= bd_h(flash.type) %>"><%= bd_h(flash.message) %></div>
+    <% } %>
+
+    <section class="admin-card admin-toolbar-card">
+      <div class="admin-card-header">
+        <div>
+          <h2>Presentaciones personalizadas</h2>
+          <p>Administra los tipos de presentación que usa el constructor de ramos personalizados.</p>
+        </div>
+
+        <button type="button" class="btn btn-primary" data-open-presentation-modal>
+          + Crear presentación
+        </button>
+      </div>
+    </section>
+
+    <div class="bd-modal-overlay <%= editing ? 'is-open' : '' %>" data-presentation-modal aria-hidden="<%= editing ? 'false' : 'true' %>">
+      <div class="bd-modal">
+        <div class="bd-modal-header">
+          <div>
+            <p class="eyebrow">Constructor personalizado</p>
+            <h2><%= editing ? 'Editar presentación' : 'Nueva presentación' %></h2>
+          </div>
+
+          <button type="button" class="bd-modal-close" data-close-presentation-modal data-cancel-url="<%= editing ? '/admin/presentaciones' : '' %>" aria-label="Cerrar modal">
+            ×
+          </button>
+        </div>
+
+        <form method="post" class="bd-modal-form">
+          <input type="hidden" name="id_original" value="<%= bd_h(String(editing ? editing.id : '')) %>">
+
+          <div class="form-grid three">
+            <div class="form-field">
+              <label>Identificador</label>
+              <input name="id" value="<%= bd_h(editing ? editing.id : '') %>" placeholder="ramo_full">
+              <small class="field-help">
+                Si lo dejas vacío, se genera automáticamente con el nombre.
+              </small>
+            </div>
+
+            <div class="form-field">
+              <label>Icono</label>
+              <input name="icon" value="<%= bd_h(editing ? editing.icon : '💐') %>" placeholder="💐" required>
+            </div>
+
+            <div class="form-field">
+              <label>Orden</label>
+              <input name="orden" type="number" min="1" value="<%= editing ? (editing.orden || 1) : 1 %>">
+            </div>
+
+            <div class="form-field">
+              <label>Nombre</label>
+              <input name="nombre" value="<%= bd_h(editing ? editing.nombre : '') %>" placeholder="Ramo full" required>
+            </div>
+
+            <div class="form-field">
+              <label>Precio base</label>
+              <input name="precioBase" value="<%= bd_h(editing ? editing.precioBase : '') %>" placeholder="25000" required>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Descripción</label>
+            <textarea name="descripcion" rows="3" placeholder="Descripción de la presentación"><%= bd_h(editing ? editing.descripcion : '') %></textarea>
+          </div>
+
+          <div class="form-checks" style="margin-top: 14px;">
+            <label>
+              <input type="checkbox" name="estado" <%= (!editing || editing.estado !== false) ? 'checked' : '' %>>
+              Visible
+            </label>
+          </div>
+
+          <div class="bd-modal-actions">
+            <button class="btn btn-primary" type="submit">
+              Guardar presentación
+            </button>
+
+            <button type="button" class="btn btn-soft" data-close-presentation-modal data-cancel-url="<%= editing ? '/admin/presentaciones' : '' %>">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <section class="admin-card">
+      <div class="admin-card-header">
+        <h2>Listado de presentaciones</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Orden</th>
+              <th>Presentación</th>
+              <th>Precio base</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% presentaciones.forEach(presentacion => { %>
+              <tr>
+                <td data-label="Orden">
+                  <%= presentacion.orden || 999 %>
+                </td>
+
+                <td data-label="Presentación" class="td-product">
+                  <strong>
+                    <%= bd_h(presentacion.icon || '') %> <%= bd_h(presentacion.nombre || '') %>
+                  </strong>
+                  <small><%= bd_h(presentacion.descripcion || '') %></small>
+                </td>
+
+                <td data-label="Precio base">
+                  <%= bd_format_money(presentacion.precioBase || 0) %>
+                </td>
+
+                <td data-label="Estado">
+                  <span class="status <%= presentacion.estado !== false ? 'ok' : 'bad' %>">
+                    <%= presentacion.estado !== false ? 'Visible' : 'Oculta' %>
+                  </span>
+                </td>
+
+                <td data-label="Acciones" class="td-actions">
+                  <a class="btn btn-soft" href="/admin/presentaciones?editar=<%= presentacion.id %>">
+                    Editar
+                  </a>
+
+                  <a class="btn btn-danger" href="/admin/presentaciones/eliminar/<%= presentacion.id %>" onclick="return confirm('¿Eliminar esta presentación?')">
+                    Eliminar
+                  </a>
+                </td>
+              </tr>
+            <% }); %>
+
+            <% if (presentaciones.length === 0) { %>
+              <tr>
+                <td colspan="5">No hay presentaciones creadas todavía.</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modal = document.querySelector('[data-presentation-modal]');
+      const openButton = document.querySelector('[data-open-presentation-modal]');
+      const closeButtons = document.querySelectorAll('[data-close-presentation-modal]');
+
+      function openPresentationModal() {
+        if (!modal) return;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('bd-modal-open');
+      }
+
+      function closePresentationModal(button) {
+        const cancelUrl = button?.dataset?.cancelUrl || '';
+        if (cancelUrl) {
+          window.location.href = cancelUrl;
+          return;
+        }
+        if (!modal) return;
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('bd-modal-open');
+      }
+
+      if (modal && modal.classList.contains('is-open')) {
+        document.body.classList.add('bd-modal-open');
+      }
+
+      if (openButton) {
+        openButton.addEventListener('click', openPresentationModal);
+      }
+
+      closeButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          closePresentationModal(button);
+        });
+      });
+
+      if (modal) {
+        modal.addEventListener('click', function (event) {
+          if (event.target === modal) {
+            const closeButton = document.querySelector('[data-close-presentation-modal]');
+            closePresentationModal(closeButton);
+          }
+        });
+      }
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modal && modal.classList.contains('is-open')) {
+          const closeButton = document.querySelector('[data-close-presentation-modal]');
+          closePresentationModal(closeButton);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

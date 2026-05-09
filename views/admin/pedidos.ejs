@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= bd_h(title) %> | Admin Bella Dorada</title>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body class="<%= active === 'pedidos' ? 'admin-sidebar-collapsed' : '' %>">
+
+  <div class="admin-sidebar-overlay" data-admin-menu-close></div>
+
+  <aside class="admin-sidebar" data-admin-sidebar>
+    <div class="admin-sidebar-head">
+      <a class="admin-brand" href="/admin/dashboard">
+        <span>BD</span>
+        <strong>Bella Dorada</strong>
+      </a>
+
+      <button type="button" class="admin-sidebar-close" data-admin-menu-close aria-label="Cerrar menú">
+        ×
+      </button>
+    </div>
+
+    <nav>
+      <a class="<%= active === 'dashboard' ? 'active' : '' %>" href="/admin/dashboard">Dashboard</a>
+      <a class="<%= active === 'productos' ? 'active' : '' %>" href="/admin/productos">Ramos full</a>
+      <a class="<%= active === 'productos_individuales' ? 'active' : '' %>" href="/admin/productos_individuales">Productos individuales</a>
+      <a class="<%= active === 'presentaciones' ? 'active' : '' %>" href="/admin/presentaciones">Presentaciones ramos</a>
+      <a class="<%= active === 'categorias' ? 'active' : '' %>" href="/admin/categorias">Categorías produtos</a>
+      <a class="<%= active === 'ventas' ? 'active' : '' %>" href="/admin/ventas">Ventas</a>
+      <a class="<%= active === 'pedidos' ? 'active' : '' %>" href="/admin/pedidos">Pedidos</a>
+      <a class="<%= active === 'compras' ? 'active' : '' %>" href="/admin/compras">Compras</a>
+      <a class="<%= active === 'usuarios' ? 'active' : '' %>" href="/admin/usuarios">Usuarios</a>
+      <a class="<%= active === 'roles' ? 'active' : '' %>" href="/admin/roles">Roles</a>
+      <a href="/index.html" target="_blank">Ver web</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div class="admin-topbar-left">
+        <button type="button" class="admin-menu-toggle" data-admin-menu-toggle aria-label="Abrir menú">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div>
+          <p>Panel administrativo</p>
+          <h1><%= bd_h(title) %></h1>
+        </div>
+      </div>
+
+      <div class="admin-user">
+        <span><%= bd_h(user.nombre) %></span>
+        <a href="/admin/logout">Salir</a>
+      </div>
+    </header>
+
+    <% if (flash) { %>
+      <div class="alert <%= bd_h(flash.type) %>"><%= bd_h(flash.message) %></div>
+    <% } %>
+
+    <section class="admin-card">
+      <div class="admin-card-header"><h2>Pedidos recibidos desde la web</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Pedido</th>
+              <th>Fecha</th>
+              <th>Productos</th>
+              <th>Total</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% pedidos.forEach(pedido => { %>
+              <tr>
+                <td><strong><%= bd_h(pedido.id || '') %></strong><small><%= bd_h(pedido.origen || 'web') %></small></td>
+                <td><%= bd_h(new Date(pedido.created_at || Date.now()).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })) %></td>
+                <td>
+                  <% (pedido.items || []).forEach(item => { %>
+                    <div><%= parseInt(item.cantidad || 0) %> × <%= bd_h(item.nombre || '') %></div>
+                  <% }); %>
+                </td>
+                <td><strong><%= bd_h(bd_format_money(parseFloat(pedido.total || 0))) %></strong></td>
+                <td><span class="status <%= (pedido.estado === 'cancelado') ? 'bad' : (pedido.estado === 'pendiente' ? 'warn' : 'ok') %>"><%= bd_h(pedido.estado || 'pendiente') %></span></td>
+                <td>
+                  <form method="post" style="display:flex; gap:8px; align-items:center;">
+                    <input type="hidden" name="pedido_id" value="<%= bd_h(pedido.id || '') %>">
+                    <select name="estado">
+                      <% ['pendiente', 'confirmado', 'entregado', 'cancelado'].forEach(estado => { %>
+                        <option value="<%= estado %>" <%= (pedido.estado === estado) ? 'selected' : '' %>><%= estado %></option>
+                      <% }); %>
+                    </select>
+                    <button class="btn btn-primary" type="submit">Guardar</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const body = document.body;
+      const openButton = document.querySelector('[data-admin-menu-toggle]');
+      const closeButtons = document.querySelectorAll('[data-admin-menu-close]');
+      const sidebarLinks = document.querySelectorAll('.admin-sidebar nav a');
+
+      function openMenu() {
+        body.classList.add('admin-sidebar-open');
+        body.classList.remove('admin-sidebar-collapsed');
+      }
+
+      function closeMenu() {
+        body.classList.remove('admin-sidebar-open');
+        body.classList.add('admin-sidebar-collapsed');
+      }
+
+      if (openButton) {
+        openButton.addEventListener('click', function () {
+          if (body.classList.contains('admin-sidebar-open')) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        });
+      }
+
+      closeButtons.forEach(function (button) {
+        button.addEventListener('click', closeMenu);
+      });
+
+      sidebarLinks.forEach(function (link) {
+        link.addEventListener('click', function () {
+          if (window.innerWidth <= 980) {
+            closeMenu();
+          }
+        });
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          closeMenu();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

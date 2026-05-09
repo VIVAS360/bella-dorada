@@ -619,13 +619,26 @@ app.post('/admin/api', (req, res) => {
     }
 });
 
-// Archivos estáticos públicos
+// ==============================
+// ARCHIVOS ESTÁTICOS
+// ==============================
+
+// Web principal
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
+// Panel admin
+app.use('/admin-assets', express.static(path.join(__dirname, 'admin/assets')));
+
+// Uploads
 app.use(
     '/uploads',
     express.static(path.join(__dirname, 'assets/uploads'))
 );
+
+
+// ==============================
+// START SERVER
+// ==============================
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);

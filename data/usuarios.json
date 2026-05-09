@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "nombre": "Administrador Bella Dorada",
+        "usuario": "admin",
+        "email": "admin@belladorada.com",
+        "password": "$2y$10$2jxojlduseejNJ4422nqruRkzAay0A82iNzrdshUQW/ZNDq4nQpUy",
+        "rol": "admin",
+        "estado": true,
+        "created_at": "2026-04-28T19:17:22-05:00"
+    },
+    {
+        "id": 2,
+        "nombre": "Luisa rojas",
+        "usuario": "Admin",
+        "email": "belladorada.oficial@gmail.com",
+        "password": "$2y$10$p9428rokekS70K9eALios.9jm26Wf/QOfmtJmMV.zupWUL8y/pKXS",
+        "rol": "admin",
+        "estado": true,
+        "created_at": "2026-04-29T11:36:32-05:00"
+    }
+]

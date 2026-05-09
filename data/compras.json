@@ -1,0 +1,13 @@
+[
+    {
+        "id": 1,
+        "producto_id": 3,
+        "producto_nombre": "Ramo Deluxe Black",
+        "proveedor": "vivas",
+        "cantidad": 5,
+        "costo_unitario": 1500,
+        "total": 7500,
+        "nota": "aumento d precio por la guerra en ucrania",
+        "created_at": "2026-04-28T22:41:33-05:00"
+    }
+]

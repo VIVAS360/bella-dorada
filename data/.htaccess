@@ -1,0 +1,3 @@
+<FilesMatch "^(usuarios|pedidos|compras|roles)\.json$">
+  Require all denied
+</FilesMatch>

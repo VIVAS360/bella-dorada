@@ -1,0 +1,53 @@
+{
+    "presentaciones": [
+        {
+            "id": "ramo_full",
+            "icon": "💐",
+            "nombre": "Ramo full",
+            "descripcion": "Grande, llamativo y perfecto para regalo especial.",
+            "precioBase": 25000,
+            "orden": 1,
+            "estado": true,
+            "updated_at": "2026-04-28T22:25:06-05:00",
+            "created_at": "2026-04-28T22:24:46-05:00"
+        },
+        {
+            "id": "ramo_mini",
+            "icon": "🌸",
+            "nombre": "Ramo mini",
+            "descripcion": "Detalle pequeño, bonito y económico.",
+            "precioBase": 15000,
+            "orden": 2,
+            "estado": true
+        },
+        {
+            "id": "box_belleza",
+            "icon": "🎁",
+            "nombre": "Box sorpresa",
+            "descripcion": "Caja de regalo con productos seleccionados.",
+            "precioBase": 20000,
+            "orden": 3,
+            "estado": true
+        },
+        {
+            "id": "pocillo",
+            "icon": "☕",
+            "nombre": "Pocillo decorado",
+            "descripcion": "Pocillo con maquillaje, dulces o accesorios.",
+            "precioBase": 18000,
+            "orden": 4,
+            "estado": true
+        },
+        {
+            "id": "canasta",
+            "icon": "🧺",
+            "nombre": "Canasta premium",
+            "descripcion": "Presentación elegante con más espacio para detalles.",
+            "precioBase": 35000,
+            "orden": 5,
+            "estado": true,
+            "updated_at": "2026-04-29T00:50:17-05:00",
+            "created_at": "2026-04-29T00:50:17-05:00"
+        }
+    ]
+}

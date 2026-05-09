@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f6b6bd" />
+  <meta name="description" content="Bella Dorada - Catálogo dinámico" />
+  <title>Bella Dorada | Catálogo</title>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <div class="topbar" id="topbar">
+    <span>Envíos, catálogo y novedades de Bella Dorada</span>
+  </div>
+
+  <header class="site-header" data-header>
+    <div class="container header-inner">
+      <a class="brand" href="#inicio" aria-label="Ir al inicio">
+        <span class="brand-mark">BD</span>
+        <span class="brand-text">Bella Dorada</span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" data-menu-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="nav" data-nav>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#destacados">Destacados</a>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#contacto" class="nav-cta">Contacto</a>
+        <a href="admin/" class="nav-cta">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow" id="heroEtiqueta">Nueva colección</p>
+          <h1 id="heroTitulo">Catálogo Bella Dorada</h1>
+          <p id="heroDescripcion">
+            Una landing dinámica preparada para cargar productos, categorías y contenido desde archivos JSON.
+          </p>
+          <div class="hero-actions">
+            <a href="#catalogo" class="btn btn-primary">Ver catálogo</a>
+            <a href="#contacto" class="btn btn-ghost">Solicitar información</a>
+          </div>
+        </div>
+
+        <div class="hero-custom-bouquet">
+          <div class="custom-bouquet-bg"></div>
+
+          <div class="custom-bouquet-images">
+            <div class="custom-img custom-img-main">
+              <img
+                src="https://sofi.pe/wp-content/uploads/2023/01/regalo-para-mujer-ramo-de-maquillaje-brochas-rostro-makeup-1-680x843.jpg"
+                alt="Ramo de maquillaje personalizado"
+              >
+            </div>
+
+            <div class="custom-img custom-img-1">
+              <img
+                src="https://lucilu.com.co/wp-content/uploads/2025/02/Ramo-de-Maquillaje-Sorpresa-con-Brochas-y-dulces-domicilio-300x300.png"
+                alt="Ramo con brochas y dulces"
+              >
+            </div>
+
+            <div class="custom-img custom-img-2">
+              <img
+                src="https://sofi.pe/wp-content/uploads/2023/01/regalo-para-mujer-box-blanco-maquillaje-brochas-chocolates-cremas-680x843.jpg"
+                alt="Box de belleza personalizado"
+              >
+            </div>
+
+            <div class="custom-img custom-img-3">
+              <img
+                src="https://lucilu.com.co/wp-content/uploads/2025/03/ramo-de-maquillaje-dulces-cosmetico-300x300.webp"
+                alt="Ramo de maquillaje con cosméticos"
+              >
+            </div>
+          </div>
+
+          <div class="custom-bouquet-text">
+            <span>Ramos 100% personalizados</span>
+            <h3>Crea tu ramo ideal</h3>
+            <p>
+              Elige cada detalle y déjalo en nuestras manos. Creamos un ramo especial lleno de magia para sorprender.
+            </p>
+
+            <button type="button" class="custom-bouquet-btn" data-builder-open>
+              Crear mi ramo
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="destacados">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Selección especial</p>
+          <h2>Destacados</h2>
+          <p></p>
+        </div>
+        <div class="product-grid compact" id="destacadosGrid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section" id="catalogo">
+      <div class="container">
+        <div class="catalog-header">
+          <div class="section-heading no-margin">
+            <p class="eyebrow">Catálogo</p>
+            <h2>Explora nuestras referencias</h2>
+            <p>Filtra por categoría o busca por nombre, descripción o etiqueta.</p>
+          </div>
+
+          <div class="search-box">
+            <label for="buscarProducto" class="sr-only">Buscar producto</label>
+            <input id="buscarProducto" type="search" placeholder="Buscar en el catálogo..." autocomplete="off" data-search />
+          </div>
+        </div>
+
+        <div class="filters" id="categoryFilters" aria-label="Filtros por categoría"></div>
+
+        <div class="catalog-layout">
+          <div class="catalog-products-column">
+            <div class="product-grid" id="productosGrid" aria-live="polite"></div>
+            <div class="empty-state" id="emptyState" hidden>
+              <h3>No encontramos resultados</h3>
+              <p>Prueba con otra búsqueda o limpia los filtros.</p>
+            </div>
+          </div>
+
+  <aside class="cart-panel" data-cart-panel aria-label="Carrito de compras">
+    <button type="button" class="cart-mobile-head" data-cart-toggle aria-label="Abrir o cerrar carrito">
+      <span class="cart-title-wrap">
+        <span class="cart-icon">🛒</span>
+        <span>Carrito (<strong data-cart-count>0</strong>)</span>
+      </span>
+      <strong data-cart-total-head>0,00 €</strong>
+    </button>
+
+    <div class="cart-panel-inner" data-cart-inner>
+      <div class="cart-panel-header">
+        <h3>
+          <span>🛒</span>
+          Carrito
+        </h3>
+        <span class="cart-badge" data-cart-count-desktop>0</span>
+      </div>
+
+      <div class="cart-empty" data-cart-empty>
+        <p>Tu carrito está vacío.</p>
+      </div>
+
+      <div class="cart-items" data-cart-items></div>
+
+      <div class="cart-total-box">
+        <span>Total</span>
+        <strong data-cart-total>0,00 €</strong>
+      </div>
+    </div>
+
+    <button type="button" class="cart-whatsapp" data-cart-checkout>
+      Enviar pedido por WhatsApp
+    </button>
+  </aside>
+</div>
+        
+      </div>
+    </section>
+
+    <section class="section section-about" id="nosotros">
+      <div class="container about-card">
+        <div>
+          <p class="eyebrow">Sobre Bella Dorada</p>
+          <h2 id="aboutTitulo">Diseño limpio, contenido dinámico</h2>
+        </div>
+        <p id="aboutTexto">
+          Esta base está preparada para funcionar como landing page y catálogo administrado mediante archivos JSON.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <div class="cart-overlay" data-cart-overlay hidden></div>
+
+  <footer class="footer" id="contacto">
+    <div class="container footer-grid">
+      <div>
+        <strong>Bella Dorada</strong>
+        <p id="footerDescripcion">Catálogo dinámico responsive.</p>
+      </div>
+      <div class="footer-actions">
+        <a href="mailto:info@belladorada.com" id="emailLink">info@belladorada.com</a>
+        <a href="https://wa.me/573185331331" target="_blank" rel="noopener" id="whatsappLink">WhatsApp</a>
+        <div class="footer-socials" aria-label="Redes sociales">
+        <a href="#" target="_blank" rel="noopener" id="instagramLink" aria-label="Instagram">
+          Instagram
+        </a>
+
+        <a href="#" target="_blank" rel="noopener" id="facebookLink" aria-label="Facebook">
+          Facebook
+        </a>
+
+        <a href="#" target="_blank" rel="noopener" id="tiktokLink" aria-label="TikTok">
+          TikTok
+        </a>
+      </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="bouquet-builder-modal" data-builder-modal aria-hidden="true">
+  <div class="bouquet-builder-shell">
+    <button type="button" class="builder-close" data-builder-close aria-label="Cerrar constructor">
+      ×
+    </button>
+
+    <div class="builder-header">
+      <div>
+        <p class="eyebrow">Experiencia personalizada</p>
+        <h2>Arma tu ramo ideal</h2>
+        <p>
+          Elige el tipo de presentación y agrega productos individuales para crear un detalle único.
+        </p>
+      </div>
+    </div>
+
+    <div class="builder-layout">
+      <aside class="builder-preview">
+        <div class="builder-preview-card">
+          <div class="builder-preview-top">
+            <span data-builder-type-name>Selecciona una presentación</span>
+            <strong data-builder-total>$ 0</strong>
+          </div>
+
+          <div class="builder-stage" data-builder-stage>
+            <div class="builder-stage-glow"></div>
+            <div class="builder-empty-stage">
+              <span>💐</span>
+              <p>Selecciona productos para construir tu ramo</p>
+            </div>
+          </div>
+
+          <div class="builder-selected">
+            <h3>Tu selección</h3>
+            <div class="builder-selected-list" data-builder-selected-list></div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="builder-control">
+        <div class="builder-block">
+          <div class="builder-block-title">
+            <span>1</span>
+            <h3>Escoge la presentación</h3>
+          </div>
+
+          <div class="builder-types" data-builder-types></div>
+        </div>
+
+        <div class="builder-block">
+          <div class="builder-block-title">
+            <span>2</span>
+            <h3>Elige los productos</h3>
+          </div>
+
+          <div class="builder-search">
+            <input type="search" placeholder="Buscar maquillaje, accesorios, skincare..." data-builder-search>
+          </div>
+
+          <div class="builder-categories" data-builder-categories></div>
+
+          <div class="builder-products" data-builder-products></div>
+        </div>
+
+        <div class="builder-footer">
+          <div>
+            <span>Total aproximado</span>
+            <strong data-builder-footer-total>$ 0</strong>
+          </div>
+
+          <button type="button" class="builder-send" data-builder-send>
+            Enviar diseño por WhatsApp
+          </button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+  <div class="image-lightbox" data-image-lightbox aria-hidden="true">
+    <button type="button" class="image-lightbox-close" data-image-lightbox-close aria-label="Cerrar imagen">
+      ×
+    </button>
+
+    <div class="image-lightbox-content">
+      <img src="" alt="" data-image-lightbox-img>
+      <h3 data-image-lightbox-title></h3>
+    </div>
+  </div>
+
+  <template id="productCardTemplate">
+    <article class="product-card">
+      <div class="product-media"></div>
+      <div class="product-body">
+        <div class="product-meta">
+          <span class="product-category"></span>
+          <span class="product-code"></span>
+        </div>
+        <h3 class="product-title"></h3>
+        <p class="product-description"></p>
+        <div class="product-footer">
+          <strong class="product-price"></strong>
+          <button type="button" class="product-link" data-add-cart>Agregar</button>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+[
+    {
+        "id": "admin",
+        "nombre": "Administrador",
+        "permisos": [
+            "dashboard",
+            "productos",
+            "pedidos",
+            "compras",
+            "usuarios",
+            "roles"
+        ]
+    },
+    {
+        "id": "ventas",
+        "nombre": "Ventas",
+        "permisos": [
+            "dashboard",
+            "pedidos",
+            "ventas"
+        ]
+    },
+    {
+        "id": "inventario",
+        "nombre": "Inventario",
+        "permisos": [
+            "dashboard",
+            "productos",
+            "compras"
+        ]
+    }
+]

@@ -1,0 +1,50 @@
+[
+    {
+        "id": "BD-20260428-230346-120",
+        "origen": "web-whatsapp",
+        "cliente": {
+            "nombre": "Cliente WhatsApp",
+            "telefono": "",
+            "nota": ""
+        },
+        "items": [
+            {
+                "producto_id": 28,
+                "codigo": "PR-CR-002",
+                "nombre": "Splash natura tododia",
+                "cantidad": 1,
+                "precio_unitario": 50000,
+                "subtotal": 50000
+            }
+        ],
+        "total": 50000,
+        "estado": "pendiente",
+        "stock_descontado": false,
+        "created_at": "2026-04-28T23:03:46-05:00",
+        "updated_at": "2026-04-28T23:03:46-05:00"
+    },
+    {
+        "id": "BD-20260429-005927-371",
+        "origen": "web-whatsapp",
+        "cliente": {
+            "nombre": "Cliente WhatsApp",
+            "telefono": "",
+            "nota": ""
+        },
+        "items": [
+            {
+                "producto_id": 3,
+                "codigo": "BD-RP-003",
+                "nombre": "Ramo Deluxe Black",
+                "cantidad": 1,
+                "precio_unitario": 239900,
+                "subtotal": 239900
+            }
+        ],
+        "total": 239900,
+        "estado": "pendiente",
+        "stock_descontado": false,
+        "created_at": "2026-04-29T00:59:27-05:00",
+        "updated_at": "2026-04-29T00:59:27-05:00"
+    }
+]

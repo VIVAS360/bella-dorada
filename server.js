@@ -151,21 +151,44 @@ app.post('/admin/productos', upload.single('imagen_file'), (req, res) => {
     }
 
     const productoNuevo = {
-        id: id ? parseInt(id) : bd_next_id(catalogo.productos),
-        tipo_producto: 'ramos_full',
-        codigo: codigo || '',
-        nombre: nombre || '',
-        categoria: categoria || '',
-        descripcion: descripcion || '',
-        precio: precio || '0',
-        coste: coste || '0',
-        stock: Math.max(0, parseInt(stock) || 0),
-        imagen: imagenFinal,
-        destacado: !!destacado,
-        estado: estado !== undefined,
-        tags: tags ? tags.split(',').map(t => t.trim()).filter(t => t) : [],
-        updated_at: new Date().toISOString(),
-    };
+
+    id:
+        id &&
+        !isNaN(parseInt(id))
+            ? parseInt(id)
+            : bd_next_id(catalogo.productos),
+
+    tipo_producto: 'ramos_full',
+
+    codigo: (codigo || '').trim(),
+
+    nombre: (nombre || '').trim(),
+
+    categoria: (categoria || '').trim(),
+
+    descripcion: (descripcion || '').trim(),
+
+    precio: (precio || '0').trim(),
+
+    coste: (coste || '0').trim(),
+
+    stock: Math.max(0, parseInt(stock) || 0),
+
+    imagen: imagenFinal,
+
+    destacado: !!destacado,
+
+    estado: estado !== undefined,
+
+    tags: tags
+        ? tags.split(',')
+            .map(t => t.trim())
+            .filter(t => t)
+        : [],
+
+    updated_at: new Date().toISOString(),
+
+};
 
     const index = catalogo.productos.findIndex(p => p.id === productoNuevo.id);
     if (index >= 0) {
@@ -181,6 +204,36 @@ app.post('/admin/productos', upload.single('imagen_file'), (req, res) => {
     res.redirect('/admin/productos');
 });
 
+app.get('/admin/ramos/eliminar/:id', (req, res) => {
+
+    if (!bd_require_login(req, res)) return;
+
+    const catalogo = bd_catalogo();
+
+    const producto = catalogo.productos.find(
+        p =>
+            String(p.id) === String(req.params.id) &&
+            p.tipo_producto === 'ramos_full'
+    );
+
+    if (producto) {
+
+        producto.estado = false;
+
+        producto.updated_at = new Date().toISOString();
+
+        bd_save_catalogo(catalogo);
+
+        req.session.bd_flash = {
+            message: 'Ramo ocultado correctamente.',
+            type: 'success'
+        };
+
+    }
+
+    res.redirect('/admin/productos');
+
+});
 app.get('/admin/pedidos', (req, res) => {
     if (!bd_require_login(req, res)) return;
     let pedidos = bd_read_json(BD_PEDIDOS_FILE, []);
@@ -397,7 +450,9 @@ app.get('/admin/categorias/eliminar/:id', (req, res) => {
 app.get('/admin/productos_individuales', (req, res) => {
     if (!bd_require_login(req, res)) return;
     const catalogo = bd_catalogo();
-    let productos = catalogo.productos.filter(p => p.tipo_producto === 'individual' && p.estado !== false);
+    let productos = catalogo.productos.filter(
+    p => p.tipo_producto === 'individual'
+);
     productos.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
     const categorias = catalogo.categorias.filter(c => c.tipo_categoria === 'individual' && c.estado !== false);
     const editing = req.query.editar ? productos.find(p => String(p.id) === req.query.editar) : null;
@@ -412,31 +467,43 @@ app.post('/admin/productos_individuales', upload.single('imagen_file'), (req, re
     const tagsArray = tags ? tags.split(',').map(t => t.trim()).filter(t => t) : [];
     let imagenFinal = imagen || imagen_actual || '';
     if (req.file) {
-        const uploadPath = path.join(__dirname, 'assets/uploads/productos');
-        if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
-        const ext = path.extname(req.file.originalname);
-        const safeName = (nombre || 'producto').replace(/[^a-zA-Z0-9_\-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-        const fileName = `${safeName}-${Date.now()}-${Math.random().toString(36).substr(2, 4)}${ext}`;
-        const fullPath = path.join(uploadPath, fileName);
-        fs.writeFileSync(fullPath, req.file.buffer);
-        imagenFinal = `assets/uploads/productos/${fileName}`;
-    }
-    const productoNuevo = {
-        id: id ? parseInt(id) : bd_next_id(catalogo.productos),
-        tipo_producto: 'individual',
-        codigo: (codigo || '').trim(),
-        nombre: (nombre || '').trim(),
-        categoria: (categoria || '').trim(),
-        descripcion: (descripcion || '').trim(),
-        precio: (precio || '').trim(),
-        coste: (coste || '').trim(),
-        stock: Math.max(0, parseInt(stock) || 0),
-        imagen: imagenFinal,
-        destacado: destacado === 'on',
-        estado: estado !== undefined,
-        tags: tagsArray,
-        updated_at: new Date().toISOString(),
-    };
+    imagenFinal = `assets/uploads/temp/${req.file.filename}`;    
+}
+   const productoNuevo = {
+
+    id:
+        id &&
+        !isNaN(parseInt(id))
+            ? parseInt(id)
+            : bd_next_id(catalogo.productos),
+
+    tipo_producto: 'individual',
+
+    codigo: (codigo || '').trim(),
+
+    nombre: (nombre || '').trim(),
+
+    categoria: (categoria || '').trim(),
+
+    descripcion: (descripcion || '').trim(),
+
+    precio: (precio || '').trim(),
+
+    coste: (coste || '').trim(),
+
+    stock: Math.max(0, parseInt(stock) || 0),
+
+    imagen: imagenFinal,
+
+    destacado: destacado === 'on',
+
+    estado: estado !== undefined,
+
+    tags: tagsArray,
+
+    updated_at: new Date().toISOString(),
+
+};
     let found = false;
     for (let i = 0; i < catalogo.productos.length; i++) {
         if (String(catalogo.productos[i].id) === String(productoNuevo.id)) {
@@ -625,14 +692,21 @@ app.post('/admin/api', (req, res) => {
 // ==============================
 
 app.get('/api/catalogo', (req, res) => {
+
     try {
 
         const catalogo = bd_catalogo();
 
         // Productos activos
-        const productos = (catalogo.productos || []).filter(
-            p => p.estado !== false
-        );
+        const productos = (catalogo.productos || [])
+            .filter(p => p.estado !== false)
+            .map(p => ({
+                ...p,
+
+                imagen: p.imagen
+                    ? '/' + p.imagen.replace(/^\/+/, '')
+                    : ''
+            }));
 
         // Categorías activas
         const categorias = (catalogo.categorias || []).filter(
@@ -656,6 +730,7 @@ app.get('/api/catalogo', (req, res) => {
         });
 
     }
+
 });
 
 // ==============================

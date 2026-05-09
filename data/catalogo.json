@@ -41,69 +41,18 @@
       "codigo": "ramo negro",
       "nombre": "ramo azulejo",
       "categoria": "ramo-de-madre",
-      "descripcion": "lindo ramo",
+      "descripcion": "mn bm",
       "precio": "100000",
       "coste": "50000",
       "stock": 1,
-      "imagen": "assets/uploads/productos/ramo-azulejo-1778302194263-zzog6i.png",
+      "imagen": "assets/uploads/productos/ramo-azulejo-1778318239427-vd48ue.png",
       "destacado": true,
       "estado": true,
       "tags": [
         "lado"
       ],
-      "updated_at": "2026-05-09T04:49:54.265Z",
-      "created_at": "2026-05-09T04:32:48.626Z"
-    },
-    {
-      "id": 2,
-      "tipo_producto": "individual",
-      "codigo": "",
-      "nombre": "",
-      "categoria": "",
-      "descripcion": "",
-      "precio": "",
-      "coste": "",
-      "stock": 0,
-      "imagen": "",
-      "destacado": false,
-      "estado": false,
-      "tags": [],
-      "updated_at": "2026-05-09T04:36:32.439Z",
-      "created_at": "2026-05-09T04:36:32.439Z"
-    },
-    {
-      "id": 3,
-      "tipo_producto": "individual",
-      "codigo": "",
-      "nombre": "",
-      "categoria": "",
-      "descripcion": "",
-      "precio": "",
-      "coste": "",
-      "stock": 0,
-      "imagen": "",
-      "destacado": false,
-      "estado": false,
-      "tags": [],
-      "updated_at": "2026-05-09T04:50:51.799Z",
-      "created_at": "2026-05-09T04:50:51.799Z"
-    },
-    {
-      "id": 4,
-      "tipo_producto": "individual",
-      "codigo": "",
-      "nombre": "",
-      "categoria": "",
-      "descripcion": "",
-      "precio": "",
-      "coste": "",
-      "stock": 0,
-      "imagen": "",
-      "destacado": false,
-      "estado": false,
-      "tags": [],
-      "updated_at": "2026-05-09T04:51:04.942Z",
-      "created_at": "2026-05-09T04:51:04.942Z"
+      "updated_at": "2026-05-09T09:17:33.331Z",
+      "created_at": "2026-05-09T09:17:19.429Z"
     }
   ]
 }

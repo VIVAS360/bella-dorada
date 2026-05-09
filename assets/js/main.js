@@ -1,4 +1,4 @@
-const DATA_URL = 'data/catalogo.json';
+const DATA_URL = '/api/catalogo';
 
 const fallbackData = {
   config: {
@@ -511,24 +511,47 @@ function createProductCard(producto) {
 
   const media = $('.product-media', node);
 
-  if (producto.imagen) {
-    media.style.backgroundImage = `linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.28)), url("${producto.imagen}")`;
-    media.classList.add('has-zoom');
-    media.setAttribute('role', 'button');
-    media.setAttribute('tabindex', '0');
-    media.setAttribute('aria-label', `Ver imagen ampliada de ${producto.nombre}`);
+if (producto.imagen) {
 
-    media.addEventListener('click', () => {
-      openImageLightbox(producto.imagen, producto.nombre);
-    });
+  const imageUrl = producto.imagen.startsWith('/')
+    ? producto.imagen
+    : `/${producto.imagen}`;
 
-    media.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openImageLightbox(producto.imagen, producto.nombre);
-      }
-    });
-  }
+  media.style.backgroundImage =
+    `linear-gradient(
+      135deg,
+      rgba(255,255,255,.08),
+      rgba(255,255,255,.28)
+    ), url("${imageUrl}")`;
+
+  media.classList.add('has-zoom');
+
+  media.setAttribute('role', 'button');
+
+  media.setAttribute('tabindex', '0');
+
+  media.setAttribute(
+    'aria-label',
+    `Ver imagen ampliada de ${producto.nombre}`
+  );
+
+  media.addEventListener('click', () => {
+    openImageLightbox(imageUrl, producto.nombre);
+  });
+
+  media.addEventListener('keydown', (event) => {
+
+    if (event.key === 'Enter' || event.key === ' ') {
+
+      event.preventDefault();
+
+      openImageLightbox(imageUrl, producto.nombre);
+
+    }
+
+  });
+
+}
 
   const button = $('.product-link', node);
   const stock = getProductStock(producto);
@@ -705,33 +728,63 @@ function renderCart() {
     const maxReached = item.cantidad >= stock;
 
     row.innerHTML = `
-      <div class="cart-item-media" style="background-image: url('${item.producto.imagen || ''}')"></div>
+  <div 
+    class="cart-item-media" 
+    style="background-image: url('${item.producto.imagen || ''}')">
+  </div>
 
-      <div class="cart-item-info">
-        <div class="cart-item-top">
-          <strong title="${item.producto.nombre}">${item.producto.nombre}</strong>
-          <button type="button" class="cart-remove" data-cart-remove="${item.producto.id}" aria-label="Eliminar producto">×</button>
-        </div>
+  <div class="cart-item-info">
 
-        <small class="cart-item-stock">Stock disponible: ${stock}</small>
+    <div class="cart-item-top">
 
-        <div class="cart-item-controls">
-          <button type="button" data-cart-minus="${item.producto.id}" aria-label="Restar unidad">−</button>
-          <span>${item.cantidad}</span>
-          <button
-            type="button"
-            data-cart-plus="${item.producto.id}"
-            aria-label="Sumar unidad"
-            ${maxReached ? 'disabled' : ''}
-          >
-            +
-          </button>
-        </div>
+      <strong title="${item.producto.nombre}">
+        ${item.producto.nombre}
+      </strong>
 
-        <strong class="cart-item-subtotal">${formatCurrency(item.subtotal)}</strong>
-      </div>
-    `;
+      <button
+        type="button"
+        class="cart-remove"
+        data-cart-remove="${item.producto.id}"
+        aria-label="Eliminar producto"
+      >
+        ×
+      </button>
 
+    </div>
+
+    <small class="cart-item-stock">
+      Stock disponible: ${stock}
+    </small>
+
+    <div class="cart-item-controls">
+
+      <button
+        type="button"
+        data-cart-minus="${item.producto.id}"
+        aria-label="Restar unidad"
+      >
+        −
+      </button>
+
+      <span>${item.cantidad}</span>
+
+      <button
+        type="button"
+        data-cart-plus="${item.producto.id}"
+        aria-label="Sumar unidad"
+        ${maxReached ? 'disabled' : ''}
+      >
+        +
+      </button>
+
+    </div>
+
+    <strong class="cart-item-subtotal">
+      ${formatCurrency(item.subtotal)}
+    </strong>
+
+  </div>
+`;
     fragment.appendChild(row);
   });
 
@@ -1469,7 +1522,12 @@ function renderBuilderStage() {
   pieces.slice(0, 7).forEach((item) => {
     const piece = document.createElement('div');
     piece.className = 'builder-piece';
-    piece.innerHTML = `<img src="${item.producto.imagen || ''}" alt="${item.producto.nombre || ''}">`;
+    piece.innerHTML = `
+  <img 
+    src="/${item.producto.imagen || ''}" 
+    alt="${item.producto.nombre || ''}"
+  >
+`;
     fragment.appendChild(piece);
   });
 

@@ -43,7 +43,7 @@ const {
 } = require('./helpers');
 
 const app = express();
-const PORT = process.env.PORT || 3007;
+const PORT = process.env.PORT || 3008;
 
 // Configurar EJS
 app.set('view engine', 'ejs');
@@ -551,9 +551,9 @@ app.get('/admin/presentaciones', (req, res) => {
     res.render('admin/presentaciones', { ...header, presentaciones, editing, bd_format_money });
 });
 
-app.post('/admin/presentaciones', (req, res) => {
+app.post('/admin/presentaciones', upload.single('imagen_file'), (req, res) => {
     if (!bd_require_login(req, res)) return;
-    const { id_original, id, icon, nombre, descripcion, precioBase, orden, estado } = req.body;
+    const { id_original, id, icon, nombre, descripcion, precioBase, orden, estado, imagen_actual, imagen } = req.body;
     let presentaciones = bd_load_presentaciones();
     const idInput = (id || '').trim() || (nombre || '').trim();
     const idFinal = bd_unique_presentacion_id(idInput, presentaciones, id_original);
@@ -567,6 +567,21 @@ app.post('/admin/presentaciones', (req, res) => {
         estado: estado !== undefined,
         updated_at: new Date().toISOString(),
     };
+
+    let imagenFinal = imagen || imagen_actual || '';
+
+    if (req.file) {
+        const uploadDir = path.join(__dirname, 'assets/uploads/presentaciones');
+        if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+        const ext = path.extname(req.file.originalname);
+        const safeName = nombre.replace(/[^a-zA-Z0-9_\-]/g, '-').substring(0, 50);
+        const fileName = `${safeName}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`;
+        const destPath = path.join(uploadDir, fileName);
+        fs.renameSync(req.file.path, destPath);
+        imagenFinal = `assets/uploads/presentaciones/${fileName}`;
+    }
+
+    presentacionNueva.imagen = imagenFinal;
     let found = false;
     for (let i = 0; i < presentaciones.length; i++) {
         if (String(presentaciones[i].id) === id_original && id_original) {
@@ -731,6 +746,31 @@ app.get('/api/catalogo', (req, res) => {
 
     }
 
+});
+
+app.get('/api/presentaciones', (req, res) => {
+    try {
+        const presentaciones = bd_load_presentaciones()
+            .filter(p => p.estado !== false)
+            .map(p => ({
+                ...p,
+                imagen: p.imagen
+                    ? p.imagen.replace(/^\/?assets\/uploads\//, '/uploads/')
+                    : ''
+            }));
+
+        res.json({
+            ok: true,
+            presentaciones
+        });
+
+    } catch (error) {
+        console.error('Error API presentaciones:', error);
+        res.status(500).json({
+            ok: false,
+            error: 'Error cargando presentaciones'
+        });
+    }
 });
 
 // ==============================

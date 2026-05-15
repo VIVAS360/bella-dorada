@@ -32,6 +32,15 @@
       "estado": true,
       "updated_at": "2026-05-09T04:32:16.019Z",
       "created_at": "2026-05-09T04:32:16.019Z"
+    },
+    {
+      "id": "goku",
+      "nombre": "Ramo full",
+      "tipo_categoria": "ramos",
+      "orden": 1,
+      "estado": true,
+      "updated_at": "2026-05-15T03:05:45.650Z",
+      "created_at": "2026-05-15T03:05:45.650Z"
     }
   ],
   "productos": [
@@ -51,8 +60,63 @@
       "tags": [
         "lado"
       ],
-      "updated_at": "2026-05-09T09:17:33.331Z",
+      "updated_at": "2026-05-09T10:16:26.970Z",
       "created_at": "2026-05-09T09:17:19.429Z"
+    },
+    {
+      "id": 2,
+      "tipo_producto": "individual",
+      "codigo": "brocha",
+      "nombre": "brocha de tres pelos",
+      "categoria": "maquillaje-negro",
+      "descripcion": "jnkjlnl",
+      "precio": "100000",
+      "coste": "50000",
+      "stock": 1,
+      "imagen": "assets/uploads/temp/3fa1a2fc61e8002e46454f51a471183e",
+      "destacado": true,
+      "estado": true,
+      "tags": [
+        "lado"
+      ],
+      "updated_at": "2026-05-09T10:16:51.533Z",
+      "created_at": "2026-05-09T10:16:51.533Z"
+    },
+    {
+      "id": 3,
+      "tipo_producto": "ramos_full",
+      "codigo": "ramo negro",
+      "nombre": "brocha de tres pelos",
+      "categoria": "goku",
+      "descripcion": "bababab",
+      "precio": "100000",
+      "coste": "50000",
+      "stock": 10,
+      "imagen": "assets/uploads/productos/brocha-de-tres-pelos-1778814377551-5vhnsp.png",
+      "destacado": true,
+      "estado": true,
+      "tags": [
+        "lado"
+      ],
+      "updated_at": "2026-05-15T03:06:17.553Z",
+      "created_at": "2026-05-15T03:06:17.553Z"
+    },
+    {
+      "id": 4,
+      "tipo_producto": "individual",
+      "codigo": "brocha",
+      "nombre": "ramo dia de la madre",
+      "categoria": "maquillaje-negro",
+      "descripcion": "nananan",
+      "precio": "100000",
+      "coste": "50000",
+      "stock": 100,
+      "imagen": "assets/uploads/temp/2d05c53464d40dee1932d2ebb311e469",
+      "destacado": true,
+      "estado": true,
+      "tags": [],
+      "updated_at": "2026-05-15T03:06:51.726Z",
+      "created_at": "2026-05-15T03:06:51.726Z"
     }
   ]
 }

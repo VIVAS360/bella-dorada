@@ -89,7 +89,7 @@
           </button>
         </div>
 
-        <form method="post" class="bd-modal-form">
+        <form method="post" enctype="multipart/form-data" class="bd-modal-form">
           <input type="hidden" name="id_original" value="<%= bd_h(String(editing ? editing.id : '')) %>">
 
           <div class="form-grid three">
@@ -125,6 +125,18 @@
           <div class="form-field">
             <label>Descripción</label>
             <textarea name="descripcion" rows="3" placeholder="Descripción de la presentación"><%= bd_h(editing ? editing.descripcion : '') %></textarea>
+          </div>
+
+          <div class="form-field">
+            <label>Imagen</label>
+            <input type="file" name="imagen_file" accept="image/*">
+            <input type="hidden" name="imagen_actual" value="<%= bd_h(editing ? editing.imagen : '') %>">
+            <% if (editing && editing.imagen) { %>
+              <div style="margin-top: 8px;">
+                <img src="/<%= bd_h(editing.imagen) %>" alt="Imagen actual" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd;">
+                <p style="margin-top: 4px; font-size: 12px; color: #666;">Imagen actual. Sube una nueva para reemplazarla.</p>
+              </div>
+            <% } %>
           </div>
 
           <div class="form-checks" style="margin-top: 14px;">

@@ -500,6 +500,12 @@ function getVisibleProducts({ destacados = false } = {}) {
   });
 }
 
+function formatImageUrl(url) {
+  if (!url) return '';
+  const value = String(url).trim();
+  return value.startsWith('/') ? value : `/${value}`;
+}
+
 function createProductCard(producto) {
   const node = elements.cardTemplate.content.firstElementChild.cloneNode(true);
 
@@ -511,18 +517,15 @@ function createProductCard(producto) {
 
   const media = $('.product-media', node);
 
-if (producto.imagen) {
+  if (producto.imagen) {
+    const imageUrl = formatImageUrl(producto.imagen);
 
-  const imageUrl = producto.imagen.startsWith('/')
-    ? producto.imagen
-    : `/${producto.imagen}`;
-
-  media.style.backgroundImage =
-    `linear-gradient(
-      135deg,
-      rgba(255,255,255,.08),
-      rgba(255,255,255,.28)
-    ), url("${imageUrl}")`;
+    media.style.backgroundImage =
+      `linear-gradient(
+        135deg,
+        rgba(255,255,255,.08),
+        rgba(255,255,255,.28)
+      ), url("${imageUrl}")`;
 
   media.classList.add('has-zoom');
 
@@ -1058,7 +1061,7 @@ function bindImageLightboxEvents() {
   });
 }
 
-const BUILDER_TYPES_URL = 'data/presentaciones.json';
+const BUILDER_TYPES_URL = '/api/presentaciones';
 
 const fallbackBouquetBuilderTypes = [
   {
@@ -1068,7 +1071,8 @@ const fallbackBouquetBuilderTypes = [
     descripcion: 'Grande, llamativo y perfecto para regalo especial.',
     precioBase: 25000,
     orden: 1,
-    estado: true
+    estado: true,
+    imagen: ''
   },
   {
     id: 'ramo_mini',
@@ -1077,7 +1081,8 @@ const fallbackBouquetBuilderTypes = [
     descripcion: 'Detalle pequeño, bonito y económico.',
     precioBase: 15000,
     orden: 2,
-    estado: true
+    estado: true,
+    imagen: ''
   },
   {
     id: 'box_belleza',
@@ -1086,7 +1091,8 @@ const fallbackBouquetBuilderTypes = [
     descripcion: 'Caja de regalo con productos seleccionados.',
     precioBase: 20000,
     orden: 3,
-    estado: true
+    estado: true,
+    imagen: ''
   },
   {
     id: 'pocillo',
@@ -1095,7 +1101,8 @@ const fallbackBouquetBuilderTypes = [
     descripcion: 'Pocillo con maquillaje, dulces o accesorios.',
     precioBase: 18000,
     orden: 4,
-    estado: true
+    estado: true,
+    imagen: ''
   },
   {
     id: 'canasta',
@@ -1104,7 +1111,8 @@ const fallbackBouquetBuilderTypes = [
     descripcion: 'Presentación elegante con más espacio para detalles.',
     precioBase: 30000,
     orden: 5,
-    estado: true
+    estado: true,
+    imagen: ''
   }
 ];
 
@@ -1128,15 +1136,25 @@ async function loadBuilderTypes() {
 
     const normalized = rawItems
       .filter((item) => item && item.estado !== false)
-      .map((item, index) => ({
-        id: String(item.id || `presentacion_${index + 1}`),
-        icon: item.icon || '💐',
-        nombre: item.nombre || 'Presentación personalizada',
-        descripcion: item.descripcion || '',
-        precioBase: parsePrice(item.precioBase ?? item.precio_base ?? 0),
-        orden: Number(item.orden ?? index + 1),
-        estado: item.estado !== false
-      }))
+      .map((item, index) => {
+        const rawImage = String(item.imagen || '').trim();
+        const normalizedImage = rawImage
+          ? rawImage.startsWith('/')
+            ? rawImage
+            : rawImage.replace(/^assets\/uploads\//, '/uploads/').replace(/^uploads\//, '/uploads/')
+          : '';
+
+        return {
+          id: String(item.id || `presentacion_${index + 1}`),
+          icon: item.icon || '💐',
+          nombre: item.nombre || 'Presentación personalizada',
+          descripcion: item.descripcion || '',
+          precioBase: parsePrice(item.precioBase ?? item.precio_base ?? 0),
+          orden: Number(item.orden ?? index + 1),
+          estado: item.estado !== false,
+          imagen: normalizedImage
+        };
+      })
       .sort((a, b) => a.orden - b.orden);
 
     bouquetBuilderTypes = normalized.length ? normalized : [...fallbackBouquetBuilderTypes];
@@ -1358,8 +1376,12 @@ function renderBuilderTypes() {
     button.className = `builder-type-card ${bouquetBuilderState.tipo === type.id ? 'is-active' : ''}`;
     button.dataset.builderType = type.id;
 
+    const imageHtml = type.imagen
+      ? `<img src="${type.imagen}" alt="${type.nombre}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">`
+      : `<span>${type.icon}</span>`;
+
     button.innerHTML = `
-      <span>${type.icon}</span>
+      ${imageHtml}
       <strong>${type.nombre}</strong>
       <small>${type.descripcion}</small>
       <small>${formatCurrency(type.precioBase)}</small>
@@ -1491,7 +1513,9 @@ function renderBuilderStage() {
 
   const baseLabel = document.createElement('div');
   baseLabel.className = 'builder-base-label';
-  baseLabel.innerHTML = `<span>${type.icon}</span> ${type.nombre}`;
+  baseLabel.innerHTML = type.imagen
+    ? `<img src="${type.imagen}" alt="${type.nombre}" class="builder-stage-image"> ${type.nombre}`
+    : `<span>${type.icon}</span> ${type.nombre}`;
 
   const fragment = document.createDocumentFragment();
   fragment.appendChild(stageGlow);
@@ -1500,7 +1524,7 @@ function renderBuilderStage() {
     const empty = document.createElement('div');
     empty.className = 'builder-empty-stage';
     empty.innerHTML = `
-      <span>${type.icon}</span>
+      ${type.imagen ? `<img src="${type.imagen}" alt="${type.nombre}" class="builder-stage-image">` : `<span>${type.icon}</span>`}
       <p>Selecciona productos para construir tu ${type.nombre.toLowerCase()}</p>
     `;
     fragment.appendChild(empty);
@@ -1522,9 +1546,10 @@ function renderBuilderStage() {
   pieces.slice(0, 7).forEach((item) => {
     const piece = document.createElement('div');
     piece.className = 'builder-piece';
+    const imageUrl = formatImageUrl(item.producto.imagen);
     piece.innerHTML = `
   <img 
-    src="/${item.producto.imagen || ''}" 
+    src="${imageUrl}" 
     alt="${item.producto.nombre || ''}"
   >
 `;
@@ -1555,8 +1580,9 @@ function renderBuilderSelectedList() {
     const row = document.createElement('div');
     row.className = 'builder-selected-row';
 
+    const selectedImageUrl = formatImageUrl(item.producto.imagen);
     row.innerHTML = `
-      <img src="${item.producto.imagen || ''}" alt="${item.producto.nombre || ''}">
+      <img src="${selectedImageUrl}" alt="${item.producto.nombre || ''}">
 
       <div>
         <strong>${item.producto.nombre || ''}</strong>
